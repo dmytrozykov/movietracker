@@ -13,7 +13,7 @@ final class TMDbService {
 
     func fetchPopularMovies(page: Int = 1) async throws -> TMDbResponse {
         let endpoint = Endpoint.MovieList.popular(page: page)
-        try await NetworkService.shared.request(
+        return try await NetworkService.shared.request(
             endpoint: endpoint,
             headers: headers
         )

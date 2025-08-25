@@ -1,26 +1,46 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Access forbidden" : {
-      "comment" : "403 error"
-    },
-    "Bad request" : {
-      "comment" : "400 error"
-    },
-    "Failed to decode response" : {
-      "comment" : "Decoding error"
-    },
-    "Invalid URL" : {
-      "comment" : "Invalid URL error"
-    },
-    "movies_screen_title" : {
-      "comment" : "Movies screen title",
-      "extractionState" : "stale",
+    "bad_request_error_description" : {
+      "comment" : "400 error",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Movies"
+            "value" : "The request could not be processed by the server"
+          }
+        }
+      }
+    },
+    "decoding_error_description" : {
+      "comment" : "Decoding error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to process the server response"
+          }
+        }
+      }
+    },
+    "forbidden_error_description" : {
+      "comment" : "403 error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You don't have permission to access this resource"
+          }
+        }
+      }
+    },
+    "invalid_url_error_description" : {
+      "comment" : "Invalid URL error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The provided URL is invalid"
           }
         }
       }
@@ -36,23 +56,71 @@
         }
       }
     },
-    "Network unavailable" : {
-      "comment" : "Network error"
+    "network_unavailable_error_description" : {
+      "comment" : "Network error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please check your internet connection and try again"
+          }
+        }
+      }
     },
-    "No data received" : {
-      "comment" : "No data error"
+    "no_data_error_description" : {
+      "comment" : "No data error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data was received from the serve"
+          }
+        }
+      }
+    },
+    "not_found_error_description" : {
+      "comment" : "404 error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The requested resource could not be found"
+          }
+        }
+      }
     },
     "popular_movies_screen_title" : {
-      "comment" : "Popular movies screen title"
+      "comment" : "Popular movies screen title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popular"
+          }
+        }
+      }
     },
-    "Resource not found" : {
-      "comment" : "404 error"
+    "server_error_description" : {
+      "comment" : "Server error with code",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server error occurred (Code: %d)"
+          }
+        }
+      }
     },
-    "Server error (Code: %d)" : {
-      "comment" : "Server error with code"
-    },
-    "Unauthorized" : {
-      "comment" : "401 error"
+    "unauthorized_error_description" : {
+      "comment" : "401 error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Authentication is required to access this resource"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

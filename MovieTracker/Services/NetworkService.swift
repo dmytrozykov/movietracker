@@ -15,8 +15,7 @@ final class NetworkService {
         endpoint: String,
         type: T.Type = T.self,
         method: HttpMethod = .get,
-        headers: [String: String]? = nil,
-        decoder: JSONDecoder? = nil
+        headers: [String: String]? = nil
     ) async throws -> T {
         guard let url = URL(string: endpoint) else {
             throw NetworkError.invalidURL
@@ -24,10 +23,10 @@ final class NetworkService {
 
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
-        
-        if let headers = headers {
-            for (key, values) in headers {
-                request.setValue(values, forHTTPHeaderField: key)
+
+        if let headers {
+            for (key, value) in headers {
+                request.setValue(value, forHTTPHeaderField: key)
             }
         }
 
@@ -45,9 +44,8 @@ final class NetworkService {
 
         try Self.handleResponse(httpResponse)
 
-        let decoder = decoder ?? JSONDecoder()
         do {
-            return try decoder.decode(type, from: data)
+            return try JSONDecoder().decode(type, from: data)
         } catch {
             throw NetworkError.decodingError
         }

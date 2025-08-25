@@ -1,8 +1,21 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Access forbidden" : {
+      "comment" : "403 error"
+    },
+    "Bad request" : {
+      "comment" : "400 error"
+    },
+    "Failed to decode response" : {
+      "comment" : "Decoding error"
+    },
+    "Invalid URL" : {
+      "comment" : "Invalid URL error"
+    },
     "movies_screen_title" : {
       "comment" : "Movies screen title",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22,6 +35,24 @@
           }
         }
       }
+    },
+    "Network unavailable" : {
+      "comment" : "Network error"
+    },
+    "No data received" : {
+      "comment" : "No data error"
+    },
+    "popular_movies_screen_title" : {
+      "comment" : "Popular movies screen title"
+    },
+    "Resource not found" : {
+      "comment" : "404 error"
+    },
+    "Server error (Code: %d)" : {
+      "comment" : "Server error with code"
+    },
+    "Unauthorized" : {
+      "comment" : "401 error"
     }
   },
   "version" : "1.0"

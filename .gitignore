@@ -14,3 +14,6 @@ xcuserdata/
 # SwiftFormat
 BuildTools/.build
 BuildTools/.swiftpm
+
+# Secret
+Secret.xcconfig

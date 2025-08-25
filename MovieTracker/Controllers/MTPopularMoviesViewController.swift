@@ -4,12 +4,17 @@ final class MTPopularMoviesViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 12
-        layout.minimumInteritemSpacing = 12
-        layout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        layout.minimumLineSpacing = Layout.spacing
+        layout.minimumInteritemSpacing = Layout.spacing
+        layout.sectionInset = UIEdgeInsets(
+            top: Layout.padding,
+            left: Layout.padding,
+            bottom: Layout.padding,
+            right: Layout.padding
+        )
 
-        let padding: CGFloat = 24
-        let spacing: CGFloat = 12
+        let padding = Layout.padding * 2
+        let spacing = Layout.spacing
         let totalSpacing = spacing + padding
         let width = (view.frame.width - totalSpacing) / 2
         layout.itemSize = CGSize(width: width, height: width * 1.5)
@@ -19,6 +24,11 @@ final class MTPopularMoviesViewController: UIViewController {
         collectionView.dataSource = self
         return collectionView
     }()
+
+    enum Layout {
+        static let padding: CGFloat = 24
+        static let spacing: CGFloat = 12
+    }
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -75,6 +85,8 @@ extension MTPopularMoviesViewController: UICollectionViewDataSource {
             for: indexPath
         ) as? PopularMovieCell else { return UICollectionViewCell() }
         cell.titleLabel.text = "The Shawshank Redemption"
+        cell.yearLabel.text = "1994"
+        cell.ratingLabel.text = "8.5"
         return cell
     }
 }

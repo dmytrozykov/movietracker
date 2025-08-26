@@ -23,6 +23,17 @@
         }
       }
     },
+    "error_alert_title" : {
+      "comment" : "Error alert title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error occured"
+          }
+        }
+      }
+    },
     "forbidden_error_description" : {
       "comment" : "403 error",
       "localizations" : {

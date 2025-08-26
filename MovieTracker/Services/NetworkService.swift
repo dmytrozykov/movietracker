@@ -51,6 +51,38 @@ final class NetworkService {
         }
     }
 
+    func loadData(
+        from urlString: String,
+        headers: [String: String]? = nil
+    ) async throws -> Data {
+        guard let url = URL(string: urlString) else {
+            throw NetworkError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+
+        if let headers {
+            for (key, value) in headers {
+                request.setValue(value, forHTTPHeaderField: key)
+            }
+        }
+
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await session.data(from: url)
+        } catch {
+            throw NetworkError.networkUnavailable
+        }
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NetworkError.noData
+        }
+
+        try Self.handleResponse(httpResponse)
+
+        return data
+    }
+
     private static func handleResponse(_ httpResponse: HTTPURLResponse) throws {
         switch httpResponse.statusCode {
         case 200 ... 299:

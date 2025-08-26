@@ -113,6 +113,9 @@ final class PopularMovieCell: UICollectionViewCell {
     }
 
     func configure(with movie: Movie) {
+        if let posterPath = movie.posterPath {
+            posterView.configure(with: posterPath)
+        }
         titleLabel.text = movie.title
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy"

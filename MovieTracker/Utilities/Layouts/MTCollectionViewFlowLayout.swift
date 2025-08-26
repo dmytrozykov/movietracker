@@ -6,7 +6,8 @@ final class MTCollectionViewFlowLayout: UICollectionViewFlowLayout {
         columnCount: Int = 2,
         spacing: CGFloat,
         padding: CGFloat,
-        itemAspectRatio: CGFloat = 1.5
+        itemAspectRatio: CGFloat = 1.5,
+        itemHeightOffset: CGFloat = 0
     ) {
         super.init()
 
@@ -16,7 +17,8 @@ final class MTCollectionViewFlowLayout: UICollectionViewFlowLayout {
 
         let totalHorizontalSpacing = sectionInset.left + sectionInset.right + spacing * CGFloat(columnCount - 1)
         let itemWidth = (frame.width - totalHorizontalSpacing) / CGFloat(columnCount)
-        itemSize = CGSize(width: itemWidth, height: itemWidth * itemAspectRatio)
+        let itemHeight = itemWidth * itemAspectRatio + itemHeightOffset
+        itemSize = CGSize(width: itemWidth, height: itemHeight)
     }
 
     @available(*, unavailable)

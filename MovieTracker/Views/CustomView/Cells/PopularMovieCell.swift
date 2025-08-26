@@ -5,13 +5,20 @@ private enum Layout {
     static let padding: CGFloat = 12
     static let spacing: CGFloat = 8
 
-    enum StarImage {
-        static let size: CGFloat = 20
+    enum Poster {
+        static let aspectRatio: CGFloat = 1.5
+    }
+
+    enum Rating {
+        static let symbolSize: CGFloat = 20
+        static let bottomPadding: CGFloat = 12
     }
 }
 
 final class PopularMovieCell: UICollectionViewCell {
     static let identifier = String(describing: PopularMovieCell.self)
+
+    let posterView = MTPosterView()
 
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -61,14 +68,21 @@ final class PopularMovieCell: UICollectionViewCell {
         contentView.layer.cornerRadius = Layout.cornerRadius
         contentView.backgroundColor = .secondarySystemBackground
 
+        contentView.addSubview(posterView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(yearLabel)
         contentView.addSubview(starImageView)
         contentView.addSubview(ratingLabel)
 
         NSLayoutConstraint.activate([
+            // Poster view
+            posterView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Layout.padding),
+            posterView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Layout.padding),
+            posterView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Layout.padding),
+            posterView.heightAnchor.constraint(equalTo: posterView.widthAnchor, multiplier: Layout.Poster.aspectRatio),
+
             // Title label
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Layout.padding),
+            titleLabel.topAnchor.constraint(equalTo: posterView.bottomAnchor, constant: Layout.padding),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Layout.padding),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Layout.padding),
 
@@ -78,9 +92,12 @@ final class PopularMovieCell: UICollectionViewCell {
             yearLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Layout.padding),
 
             // Star image
-            starImageView.topAnchor.constraint(equalTo: yearLabel.bottomAnchor, constant: Layout.spacing),
             starImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Layout.padding),
-            starImageView.widthAnchor.constraint(equalToConstant: Layout.StarImage.size),
+            starImageView.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor,
+                constant: -Layout.Rating.bottomPadding
+            ),
+            starImageView.widthAnchor.constraint(equalToConstant: Layout.Rating.symbolSize),
             starImageView.heightAnchor.constraint(equalTo: starImageView.widthAnchor),
 
             // Rating label
@@ -100,6 +117,6 @@ final class PopularMovieCell: UICollectionViewCell {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy"
         yearLabel.text = formatter.string(from: movie.releaseDate)
-        ratingLabel.text = String(movie.voteAverage)
+        ratingLabel.text = String(format: "%.1f", movie.voteAverage)
     }
 }

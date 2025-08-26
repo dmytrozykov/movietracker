@@ -1,10 +1,11 @@
 import UIKit
 
 private enum Layout {
-    static let padding: CGFloat = 24
+    static let padding: CGFloat = 12
     static let spacing: CGFloat = 12
     static let columnCount: Int = 2
-    static let itemAspectRatio: Double = 1.5
+    static let itemAspectRatio: Double = 2
+    static let itemHeightOffset: CGFloat = 24
 }
 
 final class MTPopularMoviesViewController: UIViewController {
@@ -20,7 +21,8 @@ final class MTPopularMoviesViewController: UIViewController {
             columnCount: Layout.columnCount,
             spacing: Layout.spacing,
             padding: Layout.padding,
-            itemAspectRatio: Layout.itemAspectRatio
+            itemAspectRatio: Layout.itemAspectRatio,
+            itemHeightOffset: Layout.itemHeightOffset
         )
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         collectionView.register(PopularMovieCell.self, forCellWithReuseIdentifier: PopularMovieCell.identifier)

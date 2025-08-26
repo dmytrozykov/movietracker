@@ -1,6 +1,6 @@
 import Foundation
 
-struct Movie: Codable, Hashable {
+struct Movie: Codable, Hashable, Identifiable {
     let id: Int
     let title: String
     let overview: String
@@ -13,6 +13,14 @@ struct Movie: Codable, Hashable {
         case releaseDate = "release_date"
         case posterPath = "poster_path"
         case voteAverage = "vote_average"
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    static func == (lhs: Movie, rhs: Movie) -> Bool {
+        lhs.id == rhs.id
     }
 
     init(from decoder: any Decoder) throws {

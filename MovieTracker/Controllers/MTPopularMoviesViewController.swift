@@ -66,7 +66,12 @@ final class MTPopularMoviesViewController: UIViewController {
                 let response = try await TMDbService.shared.fetchPopularMovies(page: nextPage)
                 nextPage = response.page + 1
                 totalPages = response.totalPages
-                movies.append(contentsOf: response.results)
+
+                let newMovies = response.results
+                let existingIds = Set(movies.map(\.id))
+                let uniqueNewMovies = newMovies.filter { !existingIds.contains($0.id) }
+
+                movies.append(contentsOf: uniqueNewMovies)
                 updateSnapshot()
             } catch {
                 presentErrorAlert(for: error)

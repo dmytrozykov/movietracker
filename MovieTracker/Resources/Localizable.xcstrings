@@ -23,6 +23,17 @@
         }
       }
     },
+    "error_alert_default_action" : {
+      "comment" : "Error alert default action",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
     "error_alert_title" : {
       "comment" : "Error alert title",
       "localizations" : {

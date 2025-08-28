@@ -117,9 +117,15 @@ final class PopularMovieCell: UICollectionViewCell {
             posterView.configure(with: posterPath)
         }
         titleLabel.text = movie.title
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy"
-        yearLabel.text = formatter.string(from: movie.releaseDate)
+
+        if let releaseDate = movie.releaseDate {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy"
+            yearLabel.text = formatter.string(from: releaseDate)
+        } else {
+            yearLabel.text = "-"
+        }
+
         ratingLabel.text = String(format: "%.1f", movie.voteAverage)
     }
 }

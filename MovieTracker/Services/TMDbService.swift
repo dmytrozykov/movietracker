@@ -45,7 +45,7 @@ extension TMDbService.Endpoint {
     enum MovieList {
         static let base = "\(baseUrl)/movie"
         static func popular(page: Int) -> String {
-            "\(base)/popular?language=\(Locale.current.serverIdentifier)&page=\(page)"
+            "\(base)/popular?language=\(Locale.current.bcp47Identifier)&page=\(page)"
         }
     }
 

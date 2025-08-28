@@ -13,6 +13,9 @@ final class MTPopularMoviesViewController: UIViewController {
     private var totalPages: Int = 1
     private var movies: [Movie] = []
 
+    private var isLoading = false
+    private var fetchTask: Task<Void, Never>?
+
     private var dataSource: DataSource?
 
     private lazy var collectionView: UICollectionView = {
@@ -59,11 +62,20 @@ final class MTPopularMoviesViewController: UIViewController {
     }
 
     private func fetchData() {
-        guard nextPage <= totalPages else { return }
+        guard nextPage <= totalPages, !isLoading else { return }
 
-        Task {
+        isLoading = true
+        fetchTask?.cancel()
+
+        fetchTask = Task { [weak self] in
+            guard let self else { return }
+            defer { isLoading = false }
+
             do {
                 let response = try await TMDbService.shared.fetchPopularMovies(page: nextPage)
+
+                try Task.checkCancellation()
+
                 nextPage = response.page + 1
                 totalPages = response.totalPages
 
@@ -73,6 +85,7 @@ final class MTPopularMoviesViewController: UIViewController {
 
                 movies.append(contentsOf: uniqueNewMovies)
                 updateSnapshot()
+            } catch is CancellationError { // ignore
             } catch {
                 presentErrorAlert(for: error)
             }
@@ -109,12 +122,14 @@ extension MTPopularMoviesViewController {
 
 extension MTPopularMoviesViewController: UICollectionViewDelegate {
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate _: Bool) {
+        let hasMorePages = nextPage <= totalPages
+        guard hasMorePages, !isLoading else { return }
+
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
 
-        let hasMorePages = nextPage <= totalPages
-        if offsetY > contentHeight - height, hasMorePages {
+        if offsetY > contentHeight - height {
             fetchData()
         }
     }

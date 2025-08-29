@@ -1,7 +1,6 @@
 import UIKit
 
-// MARK: - MTPrimaryButton
-
+/// A generic button type for primary action buttons.
 final class MTPrimaryButton: MTBaseButton {
     // MARK: - Setup
 

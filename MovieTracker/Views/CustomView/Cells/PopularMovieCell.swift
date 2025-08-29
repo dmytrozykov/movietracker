@@ -1,7 +1,6 @@
 import UIKit
 
-// MARK: - PopularMovieCell
-
+/// Cell for `UICollectionView` in `PopularMoviesViewController`.
 final class PopularMovieCell: UICollectionViewCell {
     static let identifier = String(describing: PopularMovieCell.self)
 

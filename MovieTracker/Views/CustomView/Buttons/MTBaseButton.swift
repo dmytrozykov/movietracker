@@ -1,7 +1,6 @@
 import UIKit
 
-// MARK: - MTBaseButton
-
+/// A base class for generic buttons in the application.
 class MTBaseButton: UIButton {
     // MARK: - Initialization
 

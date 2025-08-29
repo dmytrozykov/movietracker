@@ -1,7 +1,5 @@
 import UIKit
 
-// MARK: - RatingLabelView
-
 final class RatingLabelView: UIView {
     // MARK: - UI Components
 

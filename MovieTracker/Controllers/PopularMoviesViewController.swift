@@ -1,7 +1,5 @@
 import UIKit
 
-// MARK: - PopularMoviesViewController
-
 final class PopularMoviesViewController: UIViewController {
     private var isLoading = false
     private var nextPage: Int = 1

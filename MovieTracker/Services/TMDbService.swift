@@ -11,7 +11,7 @@ final class TMDbService {
         "accept": "application/json"
     ]
 
-    func fetchPopularMovies(page: Int = 1) async throws -> TMDbResponse {
+    func fetchPopularMovies(page: Int = 1) async throws -> TMDbPopularMovieResponse {
         let endpoint = Endpoint.MovieList.popular(page: page)
         return try await NetworkService.shared.request(
             endpoint: endpoint,

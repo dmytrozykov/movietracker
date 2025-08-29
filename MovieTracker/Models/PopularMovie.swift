@@ -1,19 +1,16 @@
 import Foundation
 
+// MARK: - PopularMovie
+
 struct PopularMovie: Codable, Hashable, Identifiable {
     let id: Int
     let title: String
     let releaseDate: Date?
     let posterPath: String?
     let voteAverage: Double
-
-    private enum CodingKeys: String, CodingKey {
-        case id, title
-        case releaseDate = "release_date"
-        case posterPath = "poster_path"
-        case voteAverage = "vote_average"
-    }
-
+    
+    // MARK: - Formatters
+    
     private static let releaseDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -22,6 +19,15 @@ struct PopularMovie: Codable, Hashable, Identifiable {
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         return formatter
     }()
+
+    // MARK: - Coding
+    
+    private enum CodingKeys: String, CodingKey {
+        case id, title
+        case releaseDate = "release_date"
+        case posterPath = "poster_path"
+        case voteAverage = "vote_average"
+    }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

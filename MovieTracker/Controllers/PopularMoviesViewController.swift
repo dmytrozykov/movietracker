@@ -100,7 +100,7 @@ final class PopularMoviesViewController: UIViewController {
         }
     }
 
-    private func handleResponse(_ response: TMDbResponse) {
+    private func handleResponse(_ response: TMDbPopularMovieResponse) {
         nextPage = response.page + 1
         totalPages = response.totalPages
 

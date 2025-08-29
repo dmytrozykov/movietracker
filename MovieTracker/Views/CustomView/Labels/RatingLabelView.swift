@@ -68,7 +68,7 @@ final class RatingLabelView: UIView {
 extension RatingLabelView {
     private enum Layout {
         static let cornerRadius: CGFloat = 12
-        static let insets = UIEdgeInsets(top: 4, left: 8, bottom: 8, right: 4)
+        static let insets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
         static let spacing: CGFloat = 4
     }
 

@@ -1,44 +1,28 @@
 import UIKit
 
-private enum Layout {
-    static let padding: CGFloat = 12
-    static let spacing: CGFloat = 12
-    static let columnCount: Int = 2
-}
+// MARK: - PopularMoviesViewController
 
 final class PopularMoviesViewController: UIViewController {
+    private var isLoading = false
     private var nextPage: Int = 1
     private var totalPages: Int = 1
     private var movies: [PopularMovie] = []
-
-    private var isLoading = false
     private var fetchTask: Task<Void, Never>?
-
     private var dataSource: DataSource?
 
+    // MARK: - UI Components
+
     private lazy var collectionView: UICollectionView = {
-        let padding = Layout.padding
-        let spacing = Layout.spacing
-        let columnCount = Layout.columnCount
-
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = spacing
-        layout.minimumInteritemSpacing = spacing
-
-        let sectionInset = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
-        layout.sectionInset = sectionInset
-
-        let totalHorizontalSpacing = sectionInset.left + sectionInset.right + spacing * CGFloat(columnCount - 1)
-        let itemWidth = (view.frame.width - totalHorizontalSpacing) / CGFloat(columnCount)
-        let itemHeight = PopularMovieCell.cellHeight(for: itemWidth)
-        layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
-
+        let layout = makeCollectionLayout()
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         collectionView.register(PopularMovieCell.self, forCellWithReuseIdentifier: PopularMovieCell.identifier)
         collectionView.delegate = self
         collectionView.backgroundColor = .systemBackground
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
+
+    // MARK: - Initialization
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -50,22 +34,51 @@ final class PopularMoviesViewController: UIViewController {
         fatalError("init(coder:) has not been implemented.")
     }
 
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureViewController()
-        setupUI()
+        setupView()
         configureDataSource()
         fetchData()
     }
 
-    private func configureViewController() {
+    // MARK: - Setup
+
+    private func setupView() {
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
+
+        view.addSubview(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 
-    private func setupUI() {
-        view.addSubview(collectionView)
+    private func makeCollectionLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = Layout.spacing
+        layout.minimumInteritemSpacing = Layout.spacing
+
+        let insets = UIEdgeInsets(
+            top: Layout.padding,
+            left: Layout.padding,
+            bottom: Layout.padding,
+            right: Layout.padding
+        )
+        layout.sectionInset = insets
+
+        let totalHorizontalSpacing = insets.left + insets.right + Layout.spacing * CGFloat(Layout.columnCount - 1)
+        let itemWidth = (UIScreen.main.bounds.width - totalHorizontalSpacing) / CGFloat(Layout.columnCount)
+        layout.itemSize = CGSize(width: itemWidth, height: PopularMovieCell.cellHeight(for: itemWidth))
+
+        return layout
     }
+
+    // MARK: - Data Fetching
 
     private func fetchData() {
         guard nextPage <= totalPages, !isLoading else { return }
@@ -79,25 +92,27 @@ final class PopularMoviesViewController: UIViewController {
 
             do {
                 let response = try await TMDbService.shared.fetchPopularMovies(page: nextPage)
-
-                try Task.checkCancellation()
-
-                nextPage = response.page + 1
-                totalPages = response.totalPages
-
-                let newMovies = response.results
-                let existingIds = Set(movies.map(\.id))
-                let uniqueNewMovies = newMovies.filter { !existingIds.contains($0.id) }
-
-                movies.append(contentsOf: uniqueNewMovies)
-                updateSnapshot()
-            } catch is CancellationError { // ignore
+                guard !Task.isCancelled else { return }
+                handleResponse(response)
             } catch {
                 presentErrorAlert(for: error)
             }
         }
     }
+
+    private func handleResponse(_ response: TMDbResponse) {
+        nextPage = response.page + 1
+        totalPages = response.totalPages
+
+        let existingIds = Set(movies.map(\.id))
+        let uniqueNewMovies = response.results.filter { !existingIds.contains($0.id) }
+        movies.append(contentsOf: uniqueNewMovies)
+
+        updateSnapshot()
+    }
 }
+
+// MARK: - Diffable DataSource
 
 extension PopularMoviesViewController {
     enum Section { case main }
@@ -118,13 +133,15 @@ extension PopularMoviesViewController {
         })
     }
 
-    @MainActor private func updateSnapshot() {
+    private func updateSnapshot() {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(movies)
         dataSource?.apply(snapshot, animatingDifferences: true)
     }
 }
+
+// MARK: - UICollectionViewDelegate
 
 extension PopularMoviesViewController: UICollectionViewDelegate {
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate _: Bool) {
@@ -135,8 +152,18 @@ extension PopularMoviesViewController: UICollectionViewDelegate {
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
 
-        if offsetY > contentHeight - height {
+        if offsetY > contentHeight - height * 2 {
             fetchData()
         }
+    }
+}
+
+// MARK: - Design System Constants
+
+extension PopularMoviesViewController {
+    private enum Layout {
+        static let padding: CGFloat = 12
+        static let spacing: CGFloat = 12
+        static let columnCount: Int = 2
     }
 }

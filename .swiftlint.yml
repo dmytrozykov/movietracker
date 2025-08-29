@@ -10,6 +10,7 @@ trailing_whitespace:
 
 disabled_rules:
   - trailing_comma
+  - opening_brace
 
 custom_rules:
   no_todo:

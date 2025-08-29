@@ -9,19 +9,19 @@ final class MTTabBarController: UITabBarController {
 
 extension MTTabBarController {
     enum Tab: Int, CaseIterable {
-        case movies
+        case popular
         case myList
 
         var icon: UIImage? {
             switch self {
-            case .movies: UIImage(systemName: SFSymbols.movieclapper)
-            case .myList: UIImage(systemName: SFSymbols.listDash)
+            case .popular: UIImage(systemName: SFSymbolNames.flameFill)
+            case .myList: UIImage(systemName: SFSymbolNames.listDash)
             }
         }
 
         var rootViewControllerType: UIViewController.Type {
             switch self {
-            case .movies: MTMoviesViewController.self
+            case .popular: PopularMoviesViewController.self
             case .myList: MTMyListViewController.self
             }
         }

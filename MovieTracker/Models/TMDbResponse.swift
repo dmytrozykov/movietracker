@@ -2,7 +2,7 @@ import Foundation
 
 struct TMDbResponse: Codable {
     let page: Int
-    let results: [Movie]
+    let results: [PopularMovie]
     let totalPages: Int
     let totalResults: Int
 

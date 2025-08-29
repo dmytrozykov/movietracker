@@ -6,7 +6,7 @@ final class MTCollectionViewFlowLayout: UICollectionViewFlowLayout {
         columnCount: Int = 2,
         spacing: CGFloat,
         padding: CGFloat,
-        itemAspectRatio: CGFloat = 1.5,
+        itemAspectRatio: CGFloat = 1.85,
         itemHeightOffset: CGFloat = 0
     ) {
         super.init()

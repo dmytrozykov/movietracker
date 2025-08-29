@@ -11,7 +11,7 @@ private enum Layout {
 final class MTPopularMoviesViewController: UIViewController {
     private var nextPage: Int = 1
     private var totalPages: Int = 1
-    private var movies: [Movie] = []
+    private var movies: [PopularMovie] = []
 
     private var isLoading = false
     private var fetchTask: Task<Void, Never>?
@@ -96,8 +96,8 @@ final class MTPopularMoviesViewController: UIViewController {
 extension MTPopularMoviesViewController {
     enum Section { case main }
 
-    typealias DataSource = UICollectionViewDiffableDataSource<Section, Movie>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Movie>
+    typealias DataSource = UICollectionViewDiffableDataSource<Section, PopularMovie>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, PopularMovie>
 
     private func configureDataSource() {
         dataSource = DataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, movie in

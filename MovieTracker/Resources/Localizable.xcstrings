@@ -1,6 +1,17 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "add_to_watchlist_button_title" : {
+      "comment" : "Add to watchlist button title",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ Watchlist"
+          }
+        }
+      }
+    },
     "bad_request_error_description" : {
       "comment" : "400 error",
       "localizations" : {

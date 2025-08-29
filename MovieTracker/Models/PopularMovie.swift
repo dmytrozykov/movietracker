@@ -8,9 +8,9 @@ struct PopularMovie: Codable, Hashable, Identifiable {
     let releaseDate: Date?
     let posterPath: String?
     let voteAverage: Double
-    
+
     // MARK: - Formatters
-    
+
     private static let releaseDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -21,7 +21,7 @@ struct PopularMovie: Codable, Hashable, Identifiable {
     }()
 
     // MARK: - Coding
-    
+
     private enum CodingKeys: String, CodingKey {
         case id, title
         case releaseDate = "release_date"

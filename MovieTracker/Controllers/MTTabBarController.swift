@@ -14,8 +14,8 @@ extension MTTabBarController {
 
         var icon: UIImage? {
             switch self {
-            case .popular: UIImage(systemName: SFSymbols.flameFill)
-            case .myList: UIImage(systemName: SFSymbols.listDash)
+            case .popular: UIImage(systemName: SFSymbolNames.flameFill)
+            case .myList: UIImage(systemName: SFSymbolNames.listDash)
             }
         }
 

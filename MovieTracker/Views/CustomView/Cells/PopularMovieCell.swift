@@ -112,11 +112,8 @@ final class PopularMovieCell: UICollectionViewCell {
 
         imageLoadingTask = Task { [weak self] in
             guard let self else { return }
-
-            let image = await TMDbService.shared.fetchImage(from: posterPath, size: .w342)
-
+            let image = await TMDBService.shared.fetchImage(from: posterPath, size: .w342)
             guard !Task.isCancelled else { return }
-
             posterImageView.image = image ?? UIImage(resource: .noPoster)
         }
     }

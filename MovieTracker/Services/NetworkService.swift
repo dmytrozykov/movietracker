@@ -15,7 +15,7 @@ final class NetworkService {
         endpoint: String,
         type: T.Type = T.self,
         method: HttpMethod = .get,
-        headers: [String: String]? = nil
+        headers: [HTTPHeader.Field: HTTPHeader.Value]? = nil
     ) async throws -> T {
         guard let url = URL(string: endpoint) else {
             throw NetworkError.invalidURL
@@ -26,7 +26,7 @@ final class NetworkService {
 
         if let headers {
             for (key, value) in headers {
-                request.setValue(value, forHTTPHeaderField: key)
+                request.setValue(value.rawValue, forHTTPHeaderField: key.rawValue)
             }
         }
 
@@ -109,6 +109,25 @@ extension NetworkService {
         case post = "POST"
         case put = "PUT"
         case delete = "DELETE"
+    }
+}
+
+enum HTTPHeader {
+    enum Field: String {
+        case authorization = "Authorization"
+        case accept = "accept"
+    }
+
+    enum Value {
+        case json
+        case bearer(apiKey: String)
+        
+        var rawValue: String {
+            switch self {
+            case .json: "application/json"
+            case .bearer(let apiKey): "Bearer \(apiKey)"
+            }
+        }
     }
 }
 

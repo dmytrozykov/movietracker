@@ -91,7 +91,7 @@ final class PopularMoviesViewController: UIViewController {
             defer { isLoading = false }
 
             do {
-                let response = try await TMDbService.shared.fetchPopularMovies(page: nextPage)
+                let response = try await TMDBService.shared.fetchPopularMovies(page: nextPage)
                 guard !Task.isCancelled else { return }
                 handleResponse(response)
             } catch {
@@ -100,7 +100,7 @@ final class PopularMoviesViewController: UIViewController {
         }
     }
 
-    private func handleResponse(_ response: TMDbPopularMovieResponse) {
+    private func handleResponse(_ response: TMDBPopularMovieResponse) {
         nextPage = response.page + 1
         totalPages = response.totalPages
 

@@ -1,7 +1,6 @@
 import Foundation
 
-// MARK: - PopularMovie
-
+/// Structure representing TMDB API movie from "popular" request.
 struct PopularMovie: Codable, Hashable, Identifiable {
     let id: Int
     let title: String

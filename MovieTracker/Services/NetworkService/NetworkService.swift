@@ -1,21 +1,39 @@
 import Foundation
 
-final class NetworkService {
-    static let shared = NetworkService()
-    private let session: URLSession
+/// Protocol defining a service for performing network requests.
+protocol NetworkServiceProtocol {
+    /// Sends a request and decodes the response into a `Codable` type.
+    func request<T: Codable>(
+        endpoint: String,
+        type: T.Type,
+        method: HTTPMethod,
+        headers: [HTTPHeader]?
+    ) async throws -> T
 
-    private init() {
+    /// Loads raw data from a URL string.
+    func loadData(
+        from urlString: String,
+        headers: [HTTPHeader]?
+    ) async throws -> Data
+}
+
+/// A concrete implementation of `NetworkServiceProtocol` using `URLSession`.
+final class NetworkService: NetworkServiceProtocol {
+    static let shared = NetworkService()
+
+    private let session: URLSession = {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 30
         config.timeoutIntervalForResource = 60
-        session = URLSession(configuration: config)
-    }
+        return URLSession(configuration: config)
+    }()
 
+    /// Sends a request and decodes the response into a `Codable` type.
     func request<T: Codable>(
         endpoint: String,
         type: T.Type = T.self,
-        method: HttpMethod = .get,
-        headers: [HTTPHeader.Field: HTTPHeader.Value]? = nil
+        method: HTTPMethod = .get,
+        headers: [HTTPHeader]? = nil
     ) async throws -> T {
         guard let url = URL(string: endpoint) else {
             throw NetworkError.invalidURL
@@ -25,24 +43,25 @@ final class NetworkService {
         request.httpMethod = method.rawValue
 
         if let headers {
-            for (key, value) in headers {
-                request.setValue(value.rawValue, forHTTPHeaderField: key.rawValue)
+            for header in headers {
+                request.setValue(header.value.rawValue, forHTTPHeaderField: header.field.rawValue)
             }
         }
 
         let (data, response): (Data, URLResponse)
-
         do {
             (data, response) = try await session.data(for: request)
         } catch {
             throw NetworkError.networkUnavailable
         }
 
+        try Task.checkCancellation()
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.noData
         }
 
-        try Self.handleResponse(httpResponse)
+        try NetworkService.checkResponse(httpResponse)
 
         do {
             return try JSONDecoder().decode(type, from: data)
@@ -51,9 +70,10 @@ final class NetworkService {
         }
     }
 
+    /// Loads raw data from a URL string.
     func loadData(
         from urlString: String,
-        headers: [String: String]? = nil
+        headers: [HTTPHeader]? = nil
     ) async throws -> Data {
         guard let url = URL(string: urlString) else {
             throw NetworkError.invalidURL
@@ -62,8 +82,8 @@ final class NetworkService {
         var request = URLRequest(url: url)
 
         if let headers {
-            for (key, value) in headers {
-                request.setValue(value, forHTTPHeaderField: key)
+            for header in headers {
+                request.setValue(header.value.rawValue, forHTTPHeaderField: header.field.rawValue)
             }
         }
 
@@ -74,16 +94,19 @@ final class NetworkService {
             throw NetworkError.networkUnavailable
         }
 
+        try Task.checkCancellation()
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.noData
         }
 
-        try Self.handleResponse(httpResponse)
+        try NetworkService.checkResponse(httpResponse)
 
         return data
     }
 
-    private static func handleResponse(_ httpResponse: HTTPURLResponse) throws {
+    /// Checks HTTP response status codes and throws a respective `NetworkError` if necessary.
+    private static func checkResponse(_ httpResponse: HTTPURLResponse) throws {
         switch httpResponse.statusCode {
         case 200 ... 299:
             break
@@ -103,34 +126,6 @@ final class NetworkService {
     }
 }
 
-extension NetworkService {
-    enum HttpMethod: String {
-        case get = "GET"
-        case post = "POST"
-        case put = "PUT"
-        case delete = "DELETE"
-    }
-}
-
-enum HTTPHeader {
-    enum Field: String {
-        case authorization = "Authorization"
-        case accept = "accept"
-    }
-
-    enum Value {
-        case json
-        case bearer(apiKey: String)
-        
-        var rawValue: String {
-            switch self {
-            case .json: "application/json"
-            case .bearer(let apiKey): "Bearer \(apiKey)"
-            }
-        }
-    }
-}
-
 enum NetworkError: Error, LocalizedError {
     case invalidURL
     case noData
@@ -140,7 +135,7 @@ enum NetworkError: Error, LocalizedError {
     case forbidden // 403
     case notFound // 404
     case serverError(Int) // 500+
-    case networkUnavailable // Network connection issues
+    case networkUnavailable
 
     var errorDescription: String? {
         switch self {

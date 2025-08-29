@@ -1,7 +1,6 @@
 import Foundation
 
-// MARK: - TMDBPopularMovieResponse
-
+/// Structure representing TMDB API response for "popular movies" request.
 struct TMDBPopularMovieResponse: Codable {
     let page: Int
     let results: [PopularMovie]

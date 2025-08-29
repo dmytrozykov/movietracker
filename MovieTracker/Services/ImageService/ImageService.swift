@@ -1,26 +1,12 @@
 import UIKit
 
-// MARK: - ImageServiceProtocol
-
 /// A protocol defining an asynchronous service for loading images.
-///
-/// Conforming types must provide an implementation that fetches images,
-/// potentially involving caching or network operations.
 protocol ImageServiceProtocol {
     /// Loads an image from a given URL string.
-    ///
-    /// - Parameter urlString: The string representation of the image URL.
-    /// - Returns: The loaded `UIImage` if successful, otherwise `nil`.
     func loadImage(from urlString: String) async -> UIImage?
 }
 
-// MARK: - ImageService
-
 /// An `actor` responsible for downloading and caching images.
-///
-/// - Uses an in-memory cache (`ImageCache`) to store images by URL string.
-/// - Ensures thread-safety through actor isolation.
-/// - Prevents duplicate downloads by reusing in-progress tasks for the same URL.
 actor ImageService: ImageServiceProtocol {
     static let shared = ImageService()
 
@@ -28,13 +14,6 @@ actor ImageService: ImageServiceProtocol {
     private var tasks: [String: Task<UIImage?, Never>] = [:]
 
     /// Loads an image from a given URL string.
-    ///
-    /// - If the image exists in cache, returns it immediately.
-    /// - If a download for the same URL is in progress, awaits its result.
-    /// - Otherwise, starts a new download and caches the result.
-    ///
-    /// - Parameter urlString: The string representation of the image URL.
-    /// - Returns: The downloaded `UIImage` if successful, otherwise `nil`.
     func loadImage(from urlString: String) async -> UIImage? {
         if let cachedImage = cache.image(forKey: urlString as NSString) {
             return cachedImage
@@ -64,6 +43,7 @@ actor ImageService: ImageServiceProtocol {
         return await task.value
     }
 
+    /// Removes a task responsible for downloading an image for specific URL.
     private func removeTask(for urlString: String) {
         tasks[urlString] = nil
     }

@@ -21,7 +21,7 @@ extension MTTabBarController {
 
         var rootViewControllerType: UIViewController.Type {
             switch self {
-            case .popular: MTPopularMoviesViewController.self
+            case .popular: PopularMoviesViewController.self
             case .myList: MTMyListViewController.self
             }
         }

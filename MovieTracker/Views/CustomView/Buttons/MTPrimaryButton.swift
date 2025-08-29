@@ -4,7 +4,7 @@ import UIKit
 
 final class MTPrimaryButton: MTBaseButton {
     // MARK: - Setup
-    
+
     override func setupButton() {
         super.setupButton()
 

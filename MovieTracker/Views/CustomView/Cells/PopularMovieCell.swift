@@ -20,17 +20,18 @@ final class PopularMovieCell: UICollectionViewCell {
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = Fonts.title
+        label.font = Typography.titleFont
         label.textColor = .label
-        label.lineBreakMode = .byTruncatingTail
         label.numberOfLines = 1
+        label.minimumScaleFactor = 0.7
+        label.lineBreakMode = .byTruncatingTail
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
     private lazy var yearLabel: UILabel = {
         let label = UILabel()
-        label.font = Fonts.year
+        label.font = Typography.yearFont
         label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -43,16 +44,6 @@ final class PopularMovieCell: UICollectionViewCell {
             for: .normal
         )
         return button
-    }()
-
-    private lazy var contentStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, yearLabel, addToListButton])
-        stackView.axis = .vertical
-        stackView.spacing = Spacing.small
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
     }()
 
     private lazy var ratingView = RatingLabelView()
@@ -132,7 +123,7 @@ final class PopularMovieCell: UICollectionViewCell {
 
     private func setupUI() {
         setupContainerView()
-        contentView.addSubviews(posterImageView, contentStackView, ratingView)
+        contentView.addSubviews(posterImageView, titleLabel, yearLabel, addToListButton, ratingView)
     }
 
     private func setupContainerView() {
@@ -148,12 +139,6 @@ final class PopularMovieCell: UICollectionViewCell {
     }
 
     private func setupConstraints() {
-        addToListButton.setContentHuggingPriority(.defaultLow, for: .vertical)
-        addToListButton.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-
-        titleLabel.setContentHuggingPriority(.required, for: .vertical)
-        yearLabel.setContentHuggingPriority(.required, for: .vertical)
-
         NSLayoutConstraint.activate([
             // Poster
             posterImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -161,26 +146,41 @@ final class PopularMovieCell: UICollectionViewCell {
             posterImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             posterImageView.heightAnchor.constraint(
                 equalTo: posterImageView.widthAnchor,
-                multiplier: 1 / Layout.posterAspectRatio
+                multiplier: 1 / PosterLayout.aspectRatio
             ),
 
-            // Content stack
-            contentStackView.topAnchor.constraint(
-                equalTo: posterImageView.bottomAnchor,
-                constant: Spacing.medium
-            ),
-            contentStackView.leadingAnchor.constraint(
+            // Title label
+            titleLabel.topAnchor.constraint(equalTo: posterImageView.bottomAnchor, constant: Spacing.small),
+            titleLabel.leadingAnchor.constraint(
                 equalTo: contentView.leadingAnchor,
                 constant: Layout.contentInsets.left
             ),
-            contentStackView.trailingAnchor.constraint(
+            titleLabel.trailingAnchor.constraint(
                 equalTo: contentView.trailingAnchor,
                 constant: -Layout.contentInsets.right
             ),
-            contentStackView.bottomAnchor.constraint(
-                equalTo: contentView.bottomAnchor,
-                constant: -Layout.contentInsets.bottom
+            titleLabel.heightAnchor.constraint(equalToConstant: TitleLabelLayout.height),
+
+            // Year label
+            yearLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Spacing.small),
+            yearLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Layout.contentInsets.left),
+            yearLabel.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -Layout.contentInsets.right
             ),
+            yearLabel.heightAnchor.constraint(equalToConstant: YearLabelLayout.height),
+
+            // "Add to list" button
+            addToListButton.topAnchor.constraint(equalTo: yearLabel.bottomAnchor, constant: Spacing.medium),
+            addToListButton.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: Layout.contentInsets.left
+            ),
+            addToListButton.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -Layout.contentInsets.right
+            ),
+            addToListButton.heightAnchor.constraint(equalToConstant: ButtonLayout.height),
 
             // Rating view
             ratingView.topAnchor.constraint(
@@ -193,6 +193,15 @@ final class PopularMovieCell: UICollectionViewCell {
             )
         ])
     }
+
+    // MARK: - Cell Height Calculation
+
+    static func cellHeight(for cellWidth: CGFloat) -> CGFloat {
+        let posterHeight = cellWidth / PosterLayout.aspectRatio
+        let totalSpacingHeight = Spacing.small * 3 + Spacing.medium
+        return posterHeight + totalSpacingHeight + TitleLabelLayout.height + YearLabelLayout.height + ButtonLayout
+            .height
+    }
 }
 
 // MARK: - Design System Constants
@@ -202,7 +211,22 @@ extension PopularMovieCell {
         static let cornerRadius: CGFloat = 8
         static let contentInsets = UIEdgeInsets(top: 0, left: 12, bottom: 12, right: 12)
         static let ratingInsets = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 8)
-        static let posterAspectRatio: CGFloat = 2.0 / 3.0
+    }
+
+    private enum ButtonLayout {
+        static let height: CGFloat = 44
+    }
+
+    private enum TitleLabelLayout {
+        static let height: CGFloat = Typography.titleFontSize * Typography.labelHeightModifier
+    }
+
+    private enum YearLabelLayout {
+        static let height: CGFloat = Typography.yearFontSize * Typography.labelHeightModifier
+    }
+
+    private enum PosterLayout {
+        static let aspectRatio: CGFloat = 2.0 / 3.0
     }
 
     private enum Spacing {
@@ -211,9 +235,14 @@ extension PopularMovieCell {
         static let large: CGFloat = 16
     }
 
-    private enum Fonts {
-        static let title = UIFont.systemFont(ofSize: 16, weight: .semibold)
-        static let year = UIFont.systemFont(ofSize: 14, weight: .regular)
+    private enum Typography {
+        static let labelHeightModifier: CGFloat = 1.2
+
+        static let titleFontSize: CGFloat = 16
+        static let yearFontSize: CGFloat = 14
+
+        static let titleFont = UIFont.systemFont(ofSize: titleFontSize, weight: .semibold)
+        static let yearFont = UIFont.systemFont(ofSize: yearFontSize, weight: .regular)
     }
 
     private enum Colors {

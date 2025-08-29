@@ -4,11 +4,9 @@ private enum Layout {
     static let padding: CGFloat = 12
     static let spacing: CGFloat = 12
     static let columnCount: Int = 2
-    static let itemAspectRatio: Double = 2
-    static let itemHeightOffset: CGFloat = 24
 }
 
-final class MTPopularMoviesViewController: UIViewController {
+final class PopularMoviesViewController: UIViewController {
     private var nextPage: Int = 1
     private var totalPages: Int = 1
     private var movies: [PopularMovie] = []
@@ -19,14 +17,22 @@ final class MTPopularMoviesViewController: UIViewController {
     private var dataSource: DataSource?
 
     private lazy var collectionView: UICollectionView = {
-        let layout = MTCollectionViewFlowLayout(
-            frame: view.bounds,
-            columnCount: Layout.columnCount,
-            spacing: Layout.spacing,
-            padding: Layout.padding,
-            itemAspectRatio: Layout.itemAspectRatio,
-            itemHeightOffset: Layout.itemHeightOffset
-        )
+        let padding = Layout.padding
+        let spacing = Layout.spacing
+        let columnCount = Layout.columnCount
+
+        let layout = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing = spacing
+        layout.minimumInteritemSpacing = spacing
+
+        let sectionInset = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
+        layout.sectionInset = sectionInset
+
+        let totalHorizontalSpacing = sectionInset.left + sectionInset.right + spacing * CGFloat(columnCount - 1)
+        let itemWidth = (view.frame.width - totalHorizontalSpacing) / CGFloat(columnCount)
+        let itemHeight = PopularMovieCell.cellHeight(for: itemWidth)
+        layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
+
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         collectionView.register(PopularMovieCell.self, forCellWithReuseIdentifier: PopularMovieCell.identifier)
         collectionView.delegate = self
@@ -93,7 +99,7 @@ final class MTPopularMoviesViewController: UIViewController {
     }
 }
 
-extension MTPopularMoviesViewController {
+extension PopularMoviesViewController {
     enum Section { case main }
 
     typealias DataSource = UICollectionViewDiffableDataSource<Section, PopularMovie>
@@ -120,7 +126,7 @@ extension MTPopularMoviesViewController {
     }
 }
 
-extension MTPopularMoviesViewController: UICollectionViewDelegate {
+extension PopularMoviesViewController: UICollectionViewDelegate {
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate _: Bool) {
         let hasMorePages = nextPage <= totalPages
         guard hasMorePages, !isLoading else { return }

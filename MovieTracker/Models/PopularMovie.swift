@@ -8,17 +8,6 @@ struct PopularMovie: Codable, Hashable, Identifiable {
     let posterPath: String?
     let voteAverage: Double
 
-    // MARK: - Formatters
-
-    private static let releaseDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.locale = .englishUnitedStatesPOSIX
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        return formatter
-    }()
-
     // MARK: - Coding
 
     private enum CodingKeys: String, CodingKey {
@@ -39,7 +28,7 @@ struct PopularMovie: Codable, Hashable, Identifiable {
         if let releaseDateString = try container.decodeIfPresent(String.self, forKey: .releaseDate),
            !releaseDateString.isEmpty
         {
-            releaseDate = PopularMovie.releaseDateFormatter.date(from: releaseDateString)
+            releaseDate = DateFormatter.releaseDateFormatter.date(from: releaseDateString)
         } else {
             releaseDate = nil
         }

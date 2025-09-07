@@ -142,6 +142,18 @@ extension PopularMoviesViewController {
 // MARK: - UICollectionViewDelegate
 
 extension PopularMoviesViewController: UICollectionViewDelegate {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let movie = movies[indexPath.item]
+        Task {
+            do {
+                let details = try await TMDBService.shared.fetchMovieDetails(id: movie.id)
+                print(details)
+            } catch {
+                print("Error: \(error)\nDescsription: \(error.localizedDescription)")
+            }
+        }
+    }
+
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate _: Bool) {
         let hasMorePages = nextPage <= totalPages
         guard hasMorePages, !isLoading else { return }

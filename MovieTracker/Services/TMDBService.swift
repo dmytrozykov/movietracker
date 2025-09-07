@@ -34,6 +34,15 @@ final class TMDBService: TMDBServiceProtocol {
         let endpoint = Endpoint.Image.get(from: path, size: size)
         return await ImageService.shared.loadImage(from: endpoint)
     }
+
+    /// Fetches details for a movie with specified ID, includes credits
+    func fetchMovieDetails(id: Int) async throws -> MovieDetails {
+        let endpoint = Endpoint.Movie.details(id: id, appending: [.credits])
+        return try await NetworkService.shared.request(
+            endpoint: endpoint,
+            headers: TMDBService.headers
+        )
+    }
 }
 
 // swiftlint:disable nesting
@@ -47,6 +56,22 @@ extension TMDBService {
 
             static func popular(page: Int) -> String {
                 "\(base)/popular?language=\(Locale.current.bcp47Identifier)&page=\(page)"
+            }
+        }
+
+        enum Movie {
+            enum Keys: String {
+                case credits
+                case videos
+                case images
+            }
+
+            static let base = "\(baseUrl)/movie"
+
+            static func details(id: Int, appending: [Keys] = []) -> String {
+                let appendingString = appending.isEmpty ? "" : "&append_to_response=\(appending.map(\.rawValue).joined(separator: ","))"
+
+                return "\(base)/\(id)?language=\(Locale.current.bcp47Identifier)\(appendingString)"
             }
         }
 

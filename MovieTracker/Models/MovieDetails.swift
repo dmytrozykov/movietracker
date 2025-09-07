@@ -32,7 +32,7 @@ struct MovieDetails: Codable {
         voteAverage = try container.decode(Double.self, forKey: .voteAverage)
         posterPath = try container.decodeIfPresent(String.self, forKey: .posterPath)
         genres = try container.decode([Genre].self, forKey: .genres)
-        runtime = try container.decodeIfPresent(Int.self, forKey: .genres)
+        runtime = try container.decodeIfPresent(Int.self, forKey: .runtime)
         overview = try container.decode(String.self, forKey: .overview)
         credits = try container.decodeIfPresent(MovieCredits.self, forKey: .credits)
 
